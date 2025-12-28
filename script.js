@@ -1,7 +1,7 @@
 // StyleShop - JavaScript Principal
 // Variables globales
 const ADMIN_PASSWORD = 'kouame';
-const WHATSAPP_NUMBER = '+22967924076';
+const WHATSAPP_NUMBER = '+22968393847';
 const STORAGE_KEY = 'styleshop_products';
 
 // État de l'application
@@ -106,7 +106,63 @@ function displayFeaturedProducts() {
 // Initialiser la page des vêtements
 function initializeVetementsPage() {
     displayAllProducts();
-    initializeFilters();
+    // Les filtres sont gérés avec la barre de progression
+}
+
+// Filtrer les produits avec barre de progression
+function filterWithProgress(filter) {
+    const progressContainer = document.getElementById('progressContainer');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    const productsGrid = document.getElementById('productsGrid');
+    
+    // Afficher la barre de progression
+    progressContainer.style.display = 'block';
+    progressContainer.classList.add('loading');
+    
+    // Mettre à jour les boutons actifs
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    filterButtons.forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
+    
+    // Messages de chargement selon le filtre
+    const messages = {
+        'all': 'Chargement de tous les produits...',
+        'homme': 'Chargement des vêtements pour homme...',
+        'femme': 'Chargement des vêtements pour femme...',
+        'enfant': 'Chargement des vêtements pour enfant...',
+        'accessoire': 'Chargement des accessoires...'
+    };
+    
+    progressText.textContent = messages[filter] || 'Chargement...';
+    
+    // Animation de la barre de progression (5 secondes)
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += Math.random() * 25; // Progression aléatoire pour un effet réaliste
+        if (progress > 100) progress = 100;
+        
+        progressFill.style.width = progress + '%';
+        
+        if (progress >= 100) {
+            clearInterval(interval);
+            
+            // Après 5 secondes, afficher les produits filtrés
+            setTimeout(() => {
+                displayAllProducts(filter);
+                
+                // Masquer la barre de progression
+                progressContainer.style.display = 'none';
+                progressContainer.classList.remove('loading');
+                progressFill.style.width = '0%';
+                
+                // Message de succès
+                showToast(`Produits ${filter === 'all' ? 'tous' : 'de la catégorie ' + getCategoryLabel(filter)} chargés !`, 'success');
+            }, 500);
+        }
+    }, 100);
+    
+    // Durée totale: environ 5 secondes (100ms * 50 itérations + délai)
 }
 
 // Afficher tous les produits
@@ -139,7 +195,7 @@ function createProductCard(product, showDelete = false) {
     
     return `
         <div class="product-card animate-on-scroll" data-category="${product.category}">
-            <img src="${imageSrc}" alt="${product.name}" class="product-image" loading="lazy">
+            <img src="${imageSrc}" alt="${product.name}" class="product-image" loading="lazy" onclick="openImageModal('${imageSrc}', '${product.name}')" style="cursor: pointer;">
             <div class="product-info">
                 <span class="product-category">${getCategoryLabel(product.category)}</span>
                 <h3 class="product-name">${product.name}</h3>
@@ -221,6 +277,7 @@ function initializeAdminPage() {
     
     if (isAdminLoggedIn) {
         showAdminPanel();
+        showToast('Bienvenue ! Vous êtes connecté.', 'success');
     } else {
         showAdminLogin();
     }
@@ -251,9 +308,16 @@ function checkAdminSession() {
         const sessionData = JSON.parse(session);
         const now = new Date().getTime();
         
-        // Session valide pendant 24 heures
-        if (now - sessionData.timestamp < 24 * 60 * 60 * 1000) {
+        // Session valide pendant 30 jours (plutôt que 24 heures)
+        const sessionDuration = sessionData.rememberMe ? 
+            (30 * 24 * 60 * 60 * 1000) : // 30 jours si "se souvenir de moi"
+            (24 * 60 * 60 * 1000);        // 24 heures sinon
+            
+        if (now - sessionData.timestamp < sessionDuration) {
             isAdminLoggedIn = true;
+            // Mettre à jour le timestamp pour prolonger la session
+            sessionData.timestamp = now;
+            localStorage.setItem('adminSession', JSON.stringify(sessionData));
         } else {
             localStorage.removeItem('adminSession');
         }
@@ -264,18 +328,22 @@ function checkAdminSession() {
 function showAdminLogin() {
     const loginSection = document.getElementById('adminLogin');
     const panelSection = document.getElementById('adminPanel');
+    const adminNavLink = document.getElementById('adminNavLink');
     
     if (loginSection) loginSection.style.display = 'block';
     if (panelSection) panelSection.style.display = 'none';
+    if (adminNavLink) adminNavLink.textContent = 'Administrateur';
 }
 
 // Afficher le panneau admin
 function showAdminPanel() {
     const loginSection = document.getElementById('adminLogin');
     const panelSection = document.getElementById('adminPanel');
+    const adminNavLink = document.getElementById('adminNavLink');
     
     if (loginSection) loginSection.style.display = 'none';
     if (panelSection) panelSection.style.display = 'block';
+    if (adminNavLink) adminNavLink.textContent = '👨‍💼 Admin (Connecté)';
     
     displayAdminProducts();
     updateProductsStats();
@@ -286,6 +354,7 @@ function handleAdminLogin(e) {
     e.preventDefault();
     
     const password = document.getElementById('password').value;
+    const rememberMe = document.getElementById('rememberMe').checked;
     const errorMsg = document.getElementById('loginError');
     
     if (password === ADMIN_PASSWORD) {
@@ -294,7 +363,8 @@ function handleAdminLogin(e) {
         // Créer une session
         const sessionData = {
             loggedIn: true,
-            timestamp: new Date().getTime()
+            timestamp: new Date().getTime(),
+            rememberMe: rememberMe // Stocker le choix "se souvenir de moi"
         };
         localStorage.setItem('adminSession', JSON.stringify(sessionData));
         
@@ -318,6 +388,11 @@ function handleAdminLogout() {
     localStorage.removeItem('adminSession');
     showAdminLogin();
     showToast('Déconnexion réussie', 'success');
+    
+    // Rediriger vers la page d'accueil après déconnexion
+    setTimeout(() => {
+        window.location.href = 'index.html';
+    }, 1500);
 }
 
 // Gérer l'ajout d'un produit
@@ -690,6 +765,107 @@ function protectFormData() {
 
 // Activer la protection des formulaires
 document.addEventListener('DOMContentLoaded', protectFormData);
+
+// Fonction pour ouvrir une image en modal
+function openImageModal(imageSrc, productName) {
+    // Créer le modal s'il n'existe pas
+    let modal = document.getElementById('imageModal');
+    
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'imageModal';
+        modal.innerHTML = `
+            <div class="modal-overlay" style="
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+                cursor: pointer;
+            ">
+                <div class="modal-content" style="
+                    max-width: 90%;
+                    max-height: 90%;
+                    position: relative;
+                    text-align: center;
+                ">
+                    <img id="modalImage" style="
+                        max-width: 100%;
+                        max-height: 80vh;
+                        object-fit: contain;
+                        border-radius: 10px;
+                    ">
+                    <div class="modal-close" style="
+                        position: absolute;
+                        top: -40px;
+                        right: 0;
+                        color: white;
+                        font-size: 30px;
+                        cursor: pointer;
+                        width: 40px;
+                        height: 40px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        border-radius: 50%;
+                        background: rgba(255,255,255,0.2);
+                    ">×</div>
+                    <div id="modalTitle" style="
+                        color: white;
+                        margin-top: 15px;
+                        font-size: 18px;
+                        font-weight: bold;
+                    "></div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        // Fermer le modal en cliquant sur l'overlay
+        modal.querySelector('.modal-overlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeImageModal();
+            }
+        });
+        
+        // Fermer le modal avec le bouton X
+        modal.querySelector('.modal-close').addEventListener('click', closeImageModal);
+        
+        // Fermer avec la touche ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeImageModal();
+            }
+        });
+    }
+    
+    // Afficher l'image
+    const modalImage = document.getElementById('modalImage');
+    const modalTitle = document.getElementById('modalTitle');
+    
+    modalImage.src = imageSrc;
+    modalTitle.textContent = productName;
+    modal.style.display = 'block';
+    
+    // Animation d'entrée
+    setTimeout(() => {
+        modal.querySelector('.modal-overlay').style.opacity = '1';
+        modal.querySelector('.modal-content').style.transform = 'scale(1)';
+    }, 10);
+}
+
+// Fonction pour fermer le modal
+function closeImageModal() {
+    const modal = document.getElementById('imageModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
 
 // Mode hors ligne
 if ('serviceWorker' in navigator) {

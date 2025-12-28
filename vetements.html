@@ -31,18 +31,28 @@
         </div>
     </section>
 
-    <!-- Filtres -->
+    <!-- Filtres avec barre de progression -->
     <section class="filters">
         <div class="container">
             <div class="filter-buttons">
-                <button class="filter-btn active" data-filter="all">Tous</button>
-                <button class="filter-btn" data-filter="homme">Homme</button>
-                <button class="filter-btn" data-filter="femme">Femme</button>
-                <button class="filter-btn" data-filter="enfant">Enfant</button>
-                <button class="filter-btn" data-filter="accessoire">Accessoires</button>
+                <button class="filter-btn active" data-filter="all" onclick="filterWithProgress('all')">Tous</button>
+                <button class="filter-btn" data-filter="homme" onclick="filterWithProgress('homme')">Homme</button>
+                <button class="filter-btn" data-filter="femme" onclick="filterWithProgress('femme')">Femme</button>
+                <button class="filter-btn" data-filter="enfant" onclick="filterWithProgress('enfant')">Enfant</button>
+                <button class="filter-btn" data-filter="accessoire" onclick="filterWithProgress('accessoire')">Accessoires</button>
+            </div>
+            
+            <!-- Barre de progression -->
+            <div class="progress-container" id="progressContainer" style="display: none; margin-top: 20px;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <p class="progress-text" id="progressText">Chargement...</p>
             </div>
         </div>
     </section>
+
+
 
     <!-- Grille de produits -->
     <section class="products">
@@ -65,7 +75,7 @@
     <footer class="footer">
         <div class="container">
             <p>&copy; 2025 StyleShop - Tous droits réservés</p>
-            <p>Contactez-nous sur WhatsApp: <strong>+229 67 92 40 76</strong></p>
+            <p>Contactez-nous sur WhatsApp: <strong>+229 68 39 38 47</strong></p>
         </div>
     </footer>
 
