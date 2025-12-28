@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - StyleShop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <h2>👗 StyleShop</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="vetements.html">Vêtements</a></li>
+                <li><a href="admin.html" class="active">Administrateur</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page de connexion admin -->
+    <section class="admin-login" id="adminLogin">
+        <div class="container">
+            <div class="login-form">
+                <div class="login-icon">🔐</div>
+                <h2>Espace Administrateur</h2>
+                <p class="login-subtitle">Entrez le mot de passe pour accéder au panneau d'administration</p>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="password">Mot de passe</label>
+                        <input type="password" id="password" name="password" required placeholder="Entrez le mot de passe">
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-full">Se connecter</button>
+                    </div>
+                </form>
+                
+                <div class="error-message" id="loginError" style="display: none;">
+                    ❌ Mot de passe incorrect. Veuillez réessayer.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Panneau d'administration -->
+    <section class="admin-panel" id="adminPanel" style="display: none;">
+        <div class="container">
+            <div class="admin-header">
+                <h1>👨‍💼 Panneau d'Administration</h1>
+                <button class="btn btn-secondary" id="logoutBtn">Déconnexion</button>
+            </div>
+
+            <!-- Ajouter un produit -->
+            <div class="add-product-section">
+                <h2>➕ Ajouter un nouvel article</h2>
+                <form id="addProductForm" class="product-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productName">Nom de l'article *</label>
+                            <input type="text" id="productName" name="productName" required placeholder="Ex: T-shirt Nike">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="productPrice">Prix (FCFA) *</label>
+                            <input type="number" id="productPrice" name="productPrice" required placeholder="Ex: 5000" min="0">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productCategory">Catégorie *</label>
+                            <select id="productCategory" name="productCategory" required>
+                                <option value="">Sélectionnez une catégorie</option>
+                                <option value="homme">Homme</option>
+                                <option value="femme">Femme</option>
+                                <option value="enfant">Enfant</option>
+                                <option value="accessoire">Accessoires</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="productImage">Photo de l'article</label>
+                            <input type="file" id="productImage" name="productImage" accept="image/*">
+                            <small>Formats acceptés: JPG, PNG, JPEG (Max: 5MB)</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productDescription">Description</label>
+                        <textarea id="productDescription" name="productDescription" placeholder="Description détaillée de l'article (optionnel)"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success btn-full">Ajouter l'article</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Liste des produits -->
+            <div class="products-list-section">
+                <h2>📦 Articles en ligne</h2>
+                <div class="products-stats" id="productsStats">
+                    <!-- Statistiques des produits -->
+                </div>
+                <div class="products-list" id="productsList">
+                    <!-- Les produits seront affichés ici -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 StyleShop - Tous droits réservés</p>
+            <p>Contactez-nous sur WhatsApp: <strong>+229 67 92 40 76</strong></p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

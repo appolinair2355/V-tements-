@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nos Vêtements - StyleShop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <h2>👗 StyleShop</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="vetements.html" class="active">Vêtements</a></li>
+                <li><a href="admin.html">Administrateur</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Header de la page -->
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title">
+                <span class="text-gradient">Nos Collection</span>
+            </h1>
+            <p class="page-subtitle">Tous nos vêtements et accessoires disponibles</p>
+        </div>
+    </section>
+
+    <!-- Filtres -->
+    <section class="filters">
+        <div class="container">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">Tous</button>
+                <button class="filter-btn" data-filter="homme">Homme</button>
+                <button class="filter-btn" data-filter="femme">Femme</button>
+                <button class="filter-btn" data-filter="enfant">Enfant</button>
+                <button class="filter-btn" data-filter="accessoire">Accessoires</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Grille de produits -->
+    <section class="products">
+        <div class="container">
+            <div class="products-grid" id="productsGrid">
+                <!-- Les produits seront chargés dynamiquement depuis le localStorage -->
+            </div>
+            
+            <!-- Message si aucun produit -->
+            <div class="no-products" id="noProducts" style="display: none;">
+                <div class="no-products-icon">📦</div>
+                <h3>Aucun produit disponible</h3>
+                <p>Ajoutez des produits depuis le panneau administrateur</p>
+                <a href="admin.html" class="btn btn-primary">Ajouter des produits</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 StyleShop - Tous droits réservés</p>
+            <p>Contactez-nous sur WhatsApp: <strong>+229 67 92 40 76</strong></p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
